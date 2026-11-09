@@ -40,9 +40,10 @@ details{margin:0 0 18px;background:var(--card);border:1px solid var(--bd);border
 summary{cursor:pointer;font-weight:600}
 .f{display:grid;gap:8px;margin-top:12px}
 .hero{text-align:center;padding:28px 8px}.hero h2{font-size:1.5rem;margin:0 0 6px}.hero p{color:var(--mu);margin:0 0 22px}
-.choix{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;max-width:640px;margin:0 auto}
+.choix{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;max-width:900px;margin:0 auto}
 .choix button{padding:22px 16px;font-size:1.1rem;font-weight:600;text-align:left}
 .choix small{display:block;font-weight:400;font-size:.8rem;margin-top:4px;opacity:.8}
+.star{border:0;background:none;padding:0 8px 0 0;font-size:1.5rem;line-height:1;cursor:pointer;color:var(--mu)}.star.fav{color:#f4b400}
 .nav{display:flex;gap:8px;margin-bottom:16px}
 .note{margin-top:22px;font-size:.8rem;color:var(--mu)}
 </style>
@@ -54,7 +55,7 @@ summary{cursor:pointer;font-weight:600}
 <main>
 <h1>Cols &amp; Ascensions : Belgique</h1>
 <p class="sub">Côtes et murs belges, avec profils, carte et tes propres ascensions.</p>
-<section id="v-accueil"><div class="hero"><h2>Les côtes belges</h2><p>Trouve une côte, regarde son profil, repère-la sur la carte.</p><div class="choix"><button class="on" data-n="cotes">Explorer les côtes<small>Fiches, profils d’ascension, difficulté</small></button><button data-n="carte">Voir la carte<small>Toutes les côtes sur la Belgique</small></button></div></div></section>
+<section id="v-accueil"><div class="hero"><h2>Les côtes belges</h2><p>Trouve une côte, regarde son profil, repère-la sur la carte.</p><div class="choix"><button class="on" data-n="cotes">Explorer les côtes<small>Fiches, profils d’ascension, difficulté</small></button><button data-n="carte">Voir la carte<small>Toutes les côtes sur la Belgique</small></button><button data-n="perso">Personnel<small>Mes côtes favorites ★</small></button></div></div></section>
 <section id="v-cotes"><p><button data-n="accueil">← Accueil</button></p><div id="det"></div>
 <details>
 <summary>＋ Ajouter une ascension (fichier GPX)</summary>
@@ -77,6 +78,7 @@ summary{cursor:pointer;font-weight:600}
 </select>
 </div>
 <div id="liste" class="grid"></div></section>
+<section id="v-perso" hidden><p><button data-n="accueil">← Accueil</button></p><div class="det"><h2>Personnel</h2><div class="loc">Tes côtes favorites, enregistrées dans ce navigateur.</div></div><h3 style="margin:16px 0 8px">★ Favoris</h3><div id="favlist" class="grid"></div></section>
 <section id="v-carte" hidden><p><button data-n="accueil">← Accueil</button></p><div id="bigmap"></div><div id="mapinfo"></div><div class="leg" id="legcat" style="margin:8px 0"></div></section>
 <p class="note">Profils calculés à partir de fichiers GPX réels. Catégorie calculée avec longueur (m) × pente moyenne (%) : Cat. 5 dès 4 000, Cat. 4 dès 8 000, Cat. 3 dès 16 000, Cat. 2 dès 32 000, Cat. 1 dès 64 000, HC dès 80 000, SHC dès 150 000. Les ascensions importées restent enregistrées dans ce navigateur.</p>
 </main>
@@ -145,6 +147,7 @@ const BASE=[
 {"id":"saintebeggesaules","n":"Mur de Sainte-Begge depuis Rue des Saules","r":"Province de Namur","lat":50.46815,"lon":5.1246,"v":[{"nom":"Versant principal","cat":"Cat. 5","km":1.14,"s":6.7,"d":76,"pts":[[5.1246,50.46815,169.9,0.0],[5.12433,50.46821,171.0,0.02],[5.12406,50.46826,172.3,0.04],[5.12379,50.46831,174.1,0.06],[5.12352,50.46827,176.3,0.08],[5.12329,50.46817,178.4,0.1],[5.12307,50.46806,180.5,0.12],[5.12287,50.46793,182.6,0.14],[5.12267,50.4678,184.5,0.16],[5.12247,50.46767,186.2,0.18],[5.12228,50.46755,188.0,0.2],[5.12208,50.46742,189.7,0.22],[5.12188,50.46729,191.5,0.24],[5.12166,50.46718,193.2,0.26],[5.12142,50.46708,195.0,0.28],[5.12119,50.46697,196.6,0.3],[5.12098,50.46686,198.2,0.32],[5.12077,50.46674,199.7,0.34],[5.12056,50.46662,201.1,0.36],[5.12036,50.46649,202.3,0.38],[5.12016,50.46636,203.5,0.4],[5.11994,50.46625,204.5,0.42],[5.11972,50.46614,205.5,0.44],[5.1195,50.46602,206.4,0.46],[5.11928,50.46591,207.4,0.48],[5.11907,50.46579,208.4,0.5],[5.11887,50.46567,209.4,0.52],[5.11871,50.46552,210.4,0.54],[5.11856,50.46537,211.5,0.56],[5.11841,50.46521,212.6,0.58],[5.11826,50.46506,213.7,0.6],[5.11812,50.46491,214.8,0.62],[5.11797,50.46475,215.7,0.64],[5.11782,50.4646,216.5,0.66],[5.11765,50.46446,217.1,0.68],[5.11746,50.46432,217.5,0.7],[5.11727,50.46419,217.7,0.72],[5.11708,50.46406,217.6,0.74],[5.11686,50.46394,217.4,0.76],[5.11664,50.46383,217.1,0.78],[5.11642,50.46372,217.2,0.8],[5.11618,50.46362,217.7,0.82],[5.11608,50.46354,218.7,0.84],[5.11623,50.46338,220.2,0.86],[5.11638,50.46323,222.1,0.88],[5.11652,50.46308,224.4,0.9],[5.11667,50.46292,227.2,0.92],[5.1168,50.46276,229.8,0.94],[5.11694,50.46261,232.3,0.96],[5.11707,50.46245,234.6,0.98],[5.11714,50.46228,236.7,1.0],[5.11717,50.4621,238.6,1.02],[5.11719,50.46192,240.3,1.04],[5.11721,50.46174,241.7,1.06],[5.11725,50.46156,243.1,1.08],[5.11731,50.46139,244.2,1.1],[5.11738,50.46121,244.8,1.12],[5.11746,50.46104,245.4,1.14],[5.11746,50.46104,245.9,1.14]]}]}
 ];
 const OUT=[[2.54,51.09],[2.65,51.14],[2.75,51.15],[2.92,51.23],[3.13,51.31],[3.22,51.34],[3.37,51.36],[3.4,51.29],[3.58,51.26],[3.6,51.21],[3.72,51.2],[3.83,51.2],[3.87,51.27],[4.03,51.28],[4.24,51.37],[4.38,51.41],[4.46,51.48],[4.53,51.42],[4.76,51.43],[4.94,51.45],[5.05,51.4],[5.2,51.33],[5.33,51.3],[5.55,51.25],[5.63,51.15],[5.78,51.17],[5.8,51.08],[5.72,51.02],[5.77,50.92],[5.64,50.85],[5.7,50.76],[5.82,50.76],[6.02,50.75],[6.12,50.67],[6.07,50.58],[6.27,50.5],[6.37,50.35],[6.22,50.3],[6.15,50.22],[6.13,50.13],[6.0,50.16],[5.97,50.04],[5.82,49.98],[5.75,49.88],[5.82,49.78],[5.76,49.69],[5.82,49.54],[5.62,49.52],[5.45,49.5],[5.34,49.55],[5.3,49.64],[5.15,49.7],[5.07,49.79],[4.9,49.82],[4.85,49.98],[4.8,50.13],[4.67,50.07],[4.55,49.98],[4.35,49.97],[4.2,50.0],[4.05,50.08],[3.97,50.25],[3.9,50.34],[3.7,50.35],[3.62,50.47],[3.46,50.52],[3.26,50.5],[3.2,50.63],[3.12,50.78],[3.01,50.77],[2.9,50.7],[2.75,50.74],[2.6,50.8],[2.58,50.92]];
+let FAV=new Set();try{FAV=new Set(JSON.parse(localStorage.getItem("ascensions-fav-v1")||"[]"))}catch(e){}const saveFav=()=>{try{localStorage.setItem("ascensions-fav-v1",JSON.stringify([...FAV]))}catch(e){}};
 let CUR=null,PR=null,TR=null,MM=null,MD=null;let store={climbs:[],extras:{}},sel=null,vi=0;
 try{store=JSON.parse(localStorage.getItem(KEY))||store}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(store))}catch(e){}};
@@ -181,18 +184,20 @@ MM=LF.map(el,{preferCanvas:true,scrollWheelZoom:false});LF.tileLayer("https://ti
 LF.polyline(t,{color:catOut(v),weight:9,opacity:.7}).addTo(MM);LF.polyline(t,{color:catCol(v),weight:6}).addTo(MM);LF.circleMarker(t[0],{radius:6,color:"#fff",weight:2,fillColor:"#5fb35f",fillOpacity:1}).addTo(MM);
 MD=LF.circleMarker(t[0],{radius:8,color:"#fff",weight:3,fillColor:"#d9480f",fillOpacity:0,opacity:0}).addTo(MM);MM.fitBounds(t,{padding:[30,30]})}
 function det(){const L=all(),c=L.find(x=>x.id===sel);if(!c){$("det").innerHTML="";return}if(vi>=c.v.length)vi=0;const v=c.v[vi];
-$("det").innerHTML=`<div class="det"><button data-x="1" style="float:right">✕ Fermer</button><h2>${esc(c.n)}</h2><div class="loc">${esc(c.r)} · Belgique${pos(c)?` · <a href="https://www.google.com/maps/search/?api=1&amp;query=${pos(c)[1]},${pos(c)[0]}" target="_blank" rel="noopener">Ouvrir dans Google Maps ↗</a>`:""}</div>
+$("det").innerHTML=`<div class="det"><button data-x="1" style="float:right">✕ Fermer</button><h2><button class="star ${FAV.has(c.id)?"fav":""}" data-fav="${c.id}" title="Favori" aria-label="Ajouter ou retirer des favoris">${FAV.has(c.id)?"★":"☆"}</button>${esc(c.n)}</h2><div class="loc">${esc(c.r)} · Belgique${pos(c)?` · <a href="https://www.google.com/maps/search/?api=1&amp;query=${pos(c)[1]},${pos(c)[0]}" target="_blank" rel="noopener">Ouvrir dans Google Maps ↗</a>`:""}</div>
 <div class="tabs">${c.v.map((x,i)=>`<button data-v="${i}" class="${i===vi?"on":""}">${esc(x.nom)}</button>`).join("")}</div>
 <div class="stats" style="grid-template-columns:repeat(4,1fr)"><div><b>${nf.format(v.km)} km</b><span>longueur</span></div><div><b>${nf.format(v.s)} %</b><span>pente moy.</span></div><div><b>+${Math.round(v.d)} m</b><span>dénivelé</span></div><div><b>${cat(v)}</b><span>catégorie</span></div></div>
 <div style="margin-top:14px">${prof(v)}</div><div style="margin-top:12px"><b>Carte</b><div id="mini"></div><div class="leg">${legCat()}</div></div></div>`;wire(c,v)}
+function cardHtml(c){const v=best(c);return`<article class="card ${c.id===sel?"sel":""}" data-id="${c.id}"><h2>${FAV.has(c.id)?"★ ":""}${esc(c.n)}</h2><div class="loc">${esc(c.r)}${c.v.length>1?" · "+c.v.length+" versants":""}${c.perso?" · perso":""}</div>
+<div class="stats"><div><b>${nf.format(v.km)} km</b><span>longueur</span></div><div><b>${nf.format(v.s)} %</b><span>pente moy.</span></div><div><b>+${Math.round(v.d)} m</b><span>dénivelé</span></div></div>
+<div class="dl" style="margin-top:12px"><span>Catégorie</span><b style="color:var(--ac)">${cat(v)}</b></div></article>`}
+function persoRender(){const l=all().filter(c=>FAV.has(c.id));$("favlist").innerHTML=l.map(cardHtml).join("")||'<p class="note" style="grid-column:1/-1">Aucune côte en favori pour l’instant. Ouvre une côte et clique sur l’étoile ☆ à côté de son nom.</p>'}
 function liste(){const q=$("q").value.trim().toLowerCase(),t=$("tri").value;
 const l=all().filter(c=>c.n.toLowerCase().includes(q)).sort((a,b)=>(t==="dif"?dif(best(b))-dif(best(a)):best(b)[t]-best(a)[t]));
-$("liste").innerHTML=l.map(c=>{const v=best(c);return`<article class="card ${c.id===sel?"sel":""}" data-id="${c.id}"><h2>${esc(c.n)}</h2><div class="loc">${esc(c.r)}${c.v.length>1?" · "+c.v.length+" versants":""}${c.perso?" · perso":""}</div>
-<div class="stats"><div><b>${nf.format(v.km)} km</b><span>longueur</span></div><div><b>${nf.format(v.s)} %</b><span>pente moy.</span></div><div><b>+${Math.round(v.d)} m</b><span>dénivelé</span></div></div>
-<div class="dl" style="margin-top:12px"><span>Catégorie</span><b style="color:var(--ac)">${cat(v)}</b></div></article>`}).join("")||'<p class="note">Aucune côte trouvée.</p>';
+$("liste").innerHTML=l.map(cardHtml).join("")||'<p class="note">Aucune côte trouvée.</p>';
 $("gt").innerHTML='<option value="">Nouvelle côte</option>'+all().map(c=>`<option value="${c.id}">Versant de : ${esc(c.n)}</option>`).join("")}
-function go(id){sel=id;vi=0;if(location.hash==="#carte"){grande();return}det();liste();$("det").scrollIntoView({behavior:"smooth",block:"start"})}
-document.addEventListener("click",e=>{if(e.target.closest("[data-x]")){sel=null;det();liste();return}const nv=e.target.closest("[data-n]");if(nv){location.hash=nv.dataset.n;return}const fi=e.target.closest("[data-fiche]");if(fi){sel=fi.dataset.fiche;vi=0;location.hash="cotes";return}const d=e.target.closest("[data-id]");if(d)go(d.dataset.id);const b=e.target.closest("[data-v]");if(b){vi=+b.dataset.v;det()}});
+function go(id){sel=id;vi=0;if(location.hash==="#perso"){location.hash="cotes";return}if(location.hash==="#carte"){grande();return}det();liste();$("det").scrollIntoView({behavior:"smooth",block:"start"})}
+document.addEventListener("click",e=>{const fv=e.target.closest("[data-fav]");if(fv){const id=fv.dataset.fav;if(FAV.has(id))FAV.delete(id);else FAV.add(id);saveFav();det();liste();return}if(e.target.closest("[data-x]")){sel=null;det();liste();return}const nv=e.target.closest("[data-n]");if(nv){location.hash=nv.dataset.n;return}const fi=e.target.closest("[data-fiche]");if(fi){sel=fi.dataset.fiche;vi=0;location.hash="cotes";return}const d=e.target.closest("[data-id]");if(d)go(d.dataset.id);const b=e.target.closest("[data-v]");if(b){vi=+b.dataset.v;det()}});
 ["q","tri"].forEach(i=>$(i).addEventListener("input",liste));
 const hav=(a,b,c,e)=>{const r=Math.PI/180,x=(c-a)*r,y=(e-b)*r,h=Math.sin(x/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)**2;return 12742*Math.asin(Math.sqrt(h))};
 function gpx(t,nom){const x=new DOMParser().parseFromString(t,"application/xml"),tp=[...x.getElementsByTagName("trkpt")];if(tp.length<2)throw new Error("Aucun point de tracé trouvé.");
@@ -215,7 +220,7 @@ L.forEach(k=>{k.v.forEach(v=>{const t=v.pts.filter(a=>a[0]!=null).map(a=>[a[1],a
 const v=c&&best(c),q=c&&pos(c);
 $("mapinfo").innerHTML=c?`<div class="det" style="margin-top:12px"><button data-fiche="${c.id}" style="float:right">Voir la fiche</button><b>${esc(c.n)}</b>${q?` <a href="https://www.google.com/maps/search/?api=1&amp;query=${q[1]},${q[0]}" target="_blank" rel="noopener">Google Maps ↗</a>`:""}<div class="loc">${esc(c.r)} · ${nf.format(v.km)} km · ${nf.format(v.s)} % · +${Math.round(v.d)} m</div></div>`:'<p class="note">Clique sur un point pour voir la côte.</p>';
 if(c){const tp=c.v.flatMap(x=>x.pts.filter(a=>a[0]!=null).map(a=>[a[1],a[0]]));if(tp.length>1)LM.fitBounds(tp,{padding:[40,40]});else if(q)LM.flyTo([q[1],q[0]],Math.max(LM.getZoom(),12))}}
-function vue(){const h=location.hash,n=h==="#carte"?"carte":h==="#cotes"?"cotes":"accueil";$("v-accueil").hidden=n!=="accueil";$("v-cotes").hidden=n!=="cotes";$("v-carte").hidden=n!=="carte";document.querySelectorAll(".nav [data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n===n));if(n==="carte")grande();else if(n==="cotes"){det();liste()}}
+function vue(){const h=location.hash,n=h==="#carte"?"carte":h==="#cotes"?"cotes":h==="#perso"?"perso":"accueil";$("v-accueil").hidden=n!=="accueil";$("v-cotes").hidden=n!=="cotes";$("v-carte").hidden=n!=="carte";$("v-perso").hidden=n!=="perso";document.querySelectorAll(".nav [data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n===n));if(n==="carte")grande();else if(n==="cotes"){det();liste()}else if(n==="perso")persoRender()}
 addEventListener("hashchange",vue);vue();
 det();liste();
 </script>
