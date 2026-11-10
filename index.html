@@ -60,13 +60,15 @@ body.home::after{opacity:.30}
 .glass,.hero{background:var(--glass);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);border-radius:16px;padding:14px 18px}
 header.glass{margin-bottom:16px}header.glass h1{margin:0 0 4px}header.glass p.sub{margin:0}
 .hero{margin-bottom:16px}.hero p{margin-bottom:18px}
+.hero{margin-bottom:16px}.hero p{margin-bottom:18px}
+.compteur{display:inline-flex;align-items:baseline;gap:8px;margin:0 0 18px}.compteur b{font-size:2.2rem;line-height:1;color:var(--ac)}.compteur span{color:var(--mu)}
 </style>
 </head>
 <body>
 <main>
 <header class="glass"><h1>Cols &amp; Ascensions : Belgique</h1>
 <p class="sub">Côtes et murs belges, avec profils, carte et tes propres ascensions.</p></header>
-<section id="v-accueil"><div class="hero"><h2>Les côtes belges</h2><p>Trouve une côte, regarde son profil, repère-la sur la carte.</p><div class="choix"><button class="on" data-n="cotes">Explorer les côtes<small>Fiches, profils d’ascension, difficulté</small></button><button data-n="carte">Voir la carte<small>Toutes les côtes sur la Belgique</small></button><button data-n="perso">Personnel<small>Mes côtes favorites ★</small></button></div></div></section>
+<section id="v-accueil"><div class="hero"><h2>Les côtes belges</h2><p>Trouve une côte, regarde son profil, repère-la sur la carte.</p><div class="compteur"><b id="nbcotes">0</b><span id="nblabel">ascensions répertoriées</span></div><div class="choix"><button class="on" data-n="cotes">Explorer les côtes<small>Fiches, profils d’ascension, difficulté</small></button><button data-n="carte">Voir la carte<small>Toutes les côtes sur la Belgique</small></button><button data-n="perso">Personnel<small>Mes côtes favorites ★</small></button></div></div></section>
 <section id="v-cotes"><p><button data-n="accueil">← Accueil</button></p><div id="det"></div>
 <details>
 <summary>＋ Ajouter une ascension (fichier GPX)</summary>
@@ -207,7 +209,7 @@ function matchLoc(c){return (!PV||PV==="*"||pv(c)===PV)&&(!VL||c.ville===VL)}
 function provCards(){const cnt={};all().forEach(c=>{cnt[pv(c)]=(cnt[pv(c)]||0)+1});
 const ps=[...PROVS,...Object.keys(cnt).filter(p=>!PROVS.includes(p))];
 return'<h3 style="grid-column:1/-1;margin:4px 0">Choisis une province</h3>'+ps.map(p=>cnt[p]?`<article class="card" data-prov="${esc(p)}"><h2>${esc(p)}</h2><div class="loc">${cnt[p]} côte${cnt[p]>1?"s":""}</div></article>`:`<article class="card" style="opacity:.5;cursor:default"><h2>${esc(p)}</h2><div class="loc">Bientôt</div></article>`).join("")+`<article class="card" data-prov="*"><h2>Toutes les provinces</h2><div class="loc">${all().length} côtes</div></article>`}
-function filtres(){const L=all(),cnt={};L.forEach(c=>{cnt[pv(c)]=(cnt[pv(c)]||0)+1});
+function filtres(){compteur();const L=all(),cnt={};L.forEach(c=>{cnt[pv(c)]=(cnt[pv(c)]||0)+1});
 const ps=[...PROVS,...Object.keys(cnt).filter(p=>!PROVS.includes(p))];
 $("prov").innerHTML='<option value="">Choisir une province…</option><option value="*"'+(PV==="*"?" selected":"")+'>Toutes les provinces</option>'+ps.map(p=>`<option value="${esc(p)}"${p===PV?" selected":""}>${esc(p)}${cnt[p]?" ("+cnt[p]+")":" (aucune côte)"}</option>`).join("");
 const vs=[...new Set(L.filter(c=>PV&&(PV==="*"||pv(c)===PV)&&c.ville).map(c=>c.ville))].sort((a,b)=>a.localeCompare(b,"fr"));
@@ -216,6 +218,7 @@ $("ville").disabled=!PV||!vs.length}
 function cardHtml(c){const v=best(c);return`<article class="card ${c.id===sel?"sel":""}" data-id="${c.id}"><h2>${FAV.has(c.id)?"★ ":""}${esc(c.n)}</h2><div class="loc">${c.ville?esc(c.ville)+" · ":""}${esc(c.r)}${c.v.length>1?" · "+c.v.length+" versants":""}${c.perso?" · perso":""}</div>
 <div class="stats"><div><b>${nf.format(v.km)} km</b><span>longueur</span></div><div><b>${nf.format(v.s)} %</b><span>pente moy.</span></div><div><b>+${Math.round(v.d)} m</b><span>dénivelé</span></div></div>
 <div class="dl" style="margin-top:12px"><span>Catégorie</span><b style="color:var(--ac)">${cat(v)}</b></div></article>`}
+function compteur(){const n=all().length;$("nbcotes").textContent=n;$("nblabel").textContent=n>1?"ascensions répertoriées":"ascension répertoriée"}
 function persoRender(){const l=all().filter(c=>FAV.has(c.id));$("favlist").innerHTML=l.map(cardHtml).join("")||'<p class="note" style="grid-column:1/-1">Aucune côte en favori pour l’instant. Ouvre une côte et clique sur l’étoile ☆ à côté de son nom.</p>'}
 function liste(){const q=$("q").value.trim().toLowerCase(),t=$("tri").value;
 const l=all().filter(c=>c.n.toLowerCase().includes(q)&&matchLoc(c)).sort((a,b)=>(t==="dif"?dif(best(b))-dif(best(a)):best(b)[t]-best(a)[t]));
@@ -245,7 +248,7 @@ L.forEach(k=>{k.v.forEach(v=>{const t=v.pts.filter(a=>a[0]!=null).map(a=>[a[1],a
 const v=c&&best(c),q=c&&pos(c);
 $("mapinfo").innerHTML=c?`<div class="det" style="margin-top:12px"><button data-fiche="${c.id}" style="float:right">Voir la fiche</button><b>${esc(c.n)}</b>${q?` <a href="https://www.google.com/maps/search/?api=1&amp;query=${q[1]},${q[0]}" target="_blank" rel="noopener">Google Maps ↗</a>`:""}<div class="loc">${esc(c.r)} · ${nf.format(v.km)} km · ${nf.format(v.s)} % · +${Math.round(v.d)} m</div></div>`:'<p class="note">Clique sur un point pour voir la côte.</p>';
 if(c){const tp=c.v.flatMap(x=>x.pts.filter(a=>a[0]!=null).map(a=>[a[1],a[0]]));if(tp.length>1)LM.fitBounds(tp,{padding:[40,40]});else if(q)LM.flyTo([q[1],q[0]],Math.max(LM.getZoom(),12))}}
-function vue(){document.body.classList.toggle("home",!["#cotes","#carte","#perso"].includes(location.hash));const h=location.hash,n=h==="#carte"?"carte":h==="#cotes"?"cotes":h==="#perso"?"perso":"accueil";$("v-accueil").hidden=n!=="accueil";$("v-cotes").hidden=n!=="cotes";$("v-carte").hidden=n!=="carte";$("v-perso").hidden=n!=="perso";document.querySelectorAll(".nav [data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n===n));if(n==="carte")grande();else if(n==="cotes"){det();liste()}else if(n==="perso")persoRender()}
+function vue(){compteur();document.body.classList.toggle("home",!["#cotes","#carte","#perso"].includes(location.hash));const h=location.hash,n=h==="#carte"?"carte":h==="#cotes"?"cotes":h==="#perso"?"perso":"accueil";$("v-accueil").hidden=n!=="accueil";$("v-cotes").hidden=n!=="cotes";$("v-carte").hidden=n!=="carte";$("v-perso").hidden=n!=="perso";document.querySelectorAll(".nav [data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n===n));if(n==="carte")grande();else if(n==="cotes"){det();liste()}else if(n==="perso")persoRender()}
 addEventListener("hashchange",vue);vue();
 det();liste();
 </script>
