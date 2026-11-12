@@ -240,11 +240,11 @@ if(t){(store.extras[t]=store.extras[t]||[]).push(v);sel=t;vi=all().find(c=>c.id=
 else{const n=$("gn").value.trim();if(!n){m.textContent="Donne un nom à la nouvelle côte.";return}const id="p"+Date.now();store.climbs.push({id,n,r:"Mes ascensions",perso:1,v:[v]});sel=id;vi=0}
 save();m.textContent="Ascension ajoutée.";det();liste()}catch(e){m.textContent=e.message||"Fichier illisible."}});
 const CITES=[["Bruxelles",4.35,50.85],["Liège",5.57,50.63],["Namur",4.87,50.47],["Gand",3.72,51.05],["Anvers",4.4,51.22],["Bruges",3.22,51.21],["Arlon",5.81,49.68]];
-let LM=null,LG=null;
+let LM=null,LG=null,MK=[];const rad=(z,s)=>Math.max(3,Math.min(11,(z-6)*1.1))*(s?1.35:1);
 function grande(){const L=all(),c=L.find(x=>x.id===sel);
-if(!LM){LM=LF.map("bigmap",{preferCanvas:true}).setView([50.6,4.7],8);LF.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(LM);LG=LF.layerGroup().addTo(LM)}
-LM.invalidateSize();LG.clearLayers();$("legcat").innerHTML=legCat();
-L.forEach(k=>{k.v.forEach(v=>{const t=v.pts.filter(a=>a[0]!=null).map(a=>[a[1],a[0]]);if(t.length>1){LF.polyline(t,{color:catOut(v),weight:8,opacity:.7}).addTo(LG);LF.polyline(t,{color:catCol(v),weight:5}).addTo(LG)}});const q=pos(k);if(q){const s=k.id===sel;LF.circleMarker([q[1],q[0]],{radius:s?11:8,color:"#fff",weight:2,fillColor:s?"#d9480f":"#555",fillOpacity:1}).bindTooltip(k.n).addTo(LG).on("click",()=>{sel=k.id;grande()})}});
+if(!LM){LM=LF.map("bigmap",{preferCanvas:true}).setView([50.6,4.7],8);LF.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:"© OpenStreetMap"}).addTo(LM);LG=LF.layerGroup().addTo(LM);LM.on("zoomend",()=>{MK.forEach(o=>o.m.setRadius(rad(LM.getZoom(),o.s)))})}
+LM.invalidateSize();LG.clearLayers();MK=[];$("legcat").innerHTML=legCat();
+L.forEach(k=>{k.v.forEach(v=>{const t=v.pts.filter(a=>a[0]!=null).map(a=>[a[1],a[0]]);if(t.length>1){LF.polyline(t,{color:catOut(v),weight:8,opacity:.7,interactive:false}).addTo(LG);LF.polyline(t,{color:catCol(v),weight:5,interactive:false}).addTo(LG);LF.polyline(t,{color:"#000",weight:18,opacity:0}).bindTooltip(k.n,{sticky:true}).addTo(LG).on("click",()=>{sel=k.id;grande()})}});const q=pos(k);if(q){const s=k.id===sel;const m=LF.circleMarker([q[1],q[0]],{radius:rad(LM.getZoom(),s),color:"#fff",weight:2,fillColor:s?"#d9480f":"#555",fillOpacity:1}).bindTooltip(k.n).addTo(LG).on("click",()=>{sel=k.id;grande()});MK.push({m,s})}});
 const v=c&&best(c),q=c&&pos(c);
 $("mapinfo").innerHTML=c?`<div class="det" style="margin-top:12px"><button data-fiche="${c.id}" style="float:right">Voir la fiche</button><b>${esc(c.n)}</b>${q?` <a href="https://www.google.com/maps/search/?api=1&amp;query=${q[1]},${q[0]}" target="_blank" rel="noopener">Google Maps ↗</a>`:""}<div class="loc">${esc(c.r)} · ${nf.format(v.km)} km · ${nf.format(v.s)} % · +${Math.round(v.d)} m</div></div>`:'<p class="note">Clique sur un point pour voir la côte.</p>';
 if(c){const tp=c.v.flatMap(x=>x.pts.filter(a=>a[0]!=null).map(a=>[a[1],a[0]]));if(tp.length>1)LM.fitBounds(tp,{padding:[40,40]});else if(q)LM.flyTo([q[1],q[0]],Math.max(LM.getZoom(),12))}}
