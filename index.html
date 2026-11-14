@@ -49,7 +49,7 @@ summary{cursor:pointer;font-weight:600}
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
-<style>#bigmap{height:65vh;min-height:380px;border-radius:14px;overflow:hidden;border:1px solid var(--bd)}.leaflet-container{font:inherit}.leaflet-tooltip.nb{background:transparent;border:0;box-shadow:none;color:#fff;font-weight:700;font-size:13px;padding:0}.leaflet-tooltip.nb::before{display:none}#mini{height:340px;border-radius:12px;overflow:hidden;border:1px solid var(--bd);margin-top:6px}</style>
+<style>.leaflet-container{font:inherit}.leaflet-tooltip.nb{background:transparent;border:0;box-shadow:none;color:#fff;font-weight:700;font-size:13px;padding:0}.leaflet-tooltip.nb::before{display:none}#mini{height:340px;border-radius:12px;overflow:hidden;border:1px solid var(--bd);margin-top:6px}</style>
 <style id="fond">
 :root{--ov:rgba(246,245,241,.80);--glass:rgba(255,255,255,.82)}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ov:rgba(22,22,20,.82);--glass:rgba(34,34,32,.82)}}
@@ -62,6 +62,13 @@ header.glass{margin-bottom:16px}header.glass h1{margin:0 0 4px}header.glass p.su
 .hero{margin-bottom:16px}.hero p{margin-bottom:18px}
 .hero{margin-bottom:16px}.hero p{margin-bottom:18px}
 .compteur{display:inline-flex;align-items:baseline;gap:8px;margin:0 0 18px}.compteur b{font-size:2.2rem;line-height:1;color:var(--ac)}.compteur span{color:var(--mu)}
+body.carte{overflow:hidden}
+#legende [data-fiche],#legende [data-par-hide]{float:none!important;display:block;margin:0 0 8px}
+#v-carte{position:fixed;inset:0;z-index:5}
+#bigmap{position:absolute;inset:0}
+#legende{position:absolute;top:12px;left:12px;bottom:12px;width:min(330px,calc(100vw - 24px));overflow:auto;z-index:1100;background:var(--glass);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:16px;padding:14px;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+@media(max-width:700px){#legende{top:auto;right:12px;width:auto;height:42vh}}
+@media(min-width:701px){.leaflet-left .leaflet-control{margin-left:354px}}
 </style>
 </head>
 <body>
@@ -96,7 +103,7 @@ header.glass{margin-bottom:16px}header.glass h1{margin:0 0 4px}header.glass p.su
 <div id="perso-home" class="choix" style="margin-top:14px"><button data-ps="fav">★ Côtes favorites<small id="pc-fav"></small></button><button data-ps="par">🧭 Mes parcours<small id="pc-par"></small></button></div>
 <div id="perso-fav" hidden style="margin-top:14px"><p><button data-ps="">← Personnel</button></p><h3 style="margin:8px 0">★ Côtes favorites</h3><div id="favlist" class="grid"></div></div>
 <div id="perso-par" hidden style="margin-top:14px"><p><button data-ps="">← Personnel</button></p><h3 style="margin:8px 0">🧭 Mes parcours</h3><div class="bar"><input id="par-nom" placeholder="Nom du nouveau parcours" style="flex:1;min-width:200px"><button data-par-new="1">Créer</button></div><div id="parlist"></div></div></section>
-<section id="v-carte" hidden><p><button data-n="accueil">← Accueil</button></p><div id="bigmap"></div><div id="mapinfo"></div><div class="leg" id="legcat" style="margin:8px 0"></div></section>
+<section id="v-carte" hidden><div id="bigmap"></div><aside id="legende"><p style="margin:0 0 10px"><button data-n="accueil">← Accueil</button></p><h3 style="margin:0 0 4px">Carte des côtes</h3><div id="mapinfo"></div><div class="leg" id="legcat" style="margin:12px 0 0"></div></aside></section>
 <p class="note glass" style="margin-top:22px">Profils calculés à partir de fichiers GPX réels. Catégorie calculée avec longueur (m) × pente moyenne (%) : Cat. 5 dès 4 000, Cat. 4 dès 8 000, Cat. 3 dès 16 000, Cat. 2 dès 32 000, Cat. 1 dès 64 000, HC dès 80 000, SHC dès 150 000. Les ascensions importées restent enregistrées dans ce navigateur.</p>
 </main>
 <script>
@@ -273,7 +280,7 @@ pp.forEach((ll,i)=>{LF.circleMarker(ll,{radius:12,color:"#fff",weight:2,fillColo
 const v=c&&best(c),q=c&&pos(c);
 $("mapinfo").innerHTML=parBarHtml()+(c?`<div class="det" style="margin-top:12px"><button data-fiche="${c.id}" style="float:right">Voir la fiche</button><b>${esc(c.n)}</b>${q?` <a href="https://www.google.com/maps/search/?api=1&amp;query=${q[1]},${q[0]}" target="_blank" rel="noopener">Google Maps ↗</a>`:""}<div class="loc">${esc(c.r)} · ${nf.format(v.km)} km · ${nf.format(v.s)} % · +${Math.round(v.d)} m</div>${parAddHtml(c)}</div>`:'<p class="note">Clique sur un point ou un tracé pour voir la côte.</p>');
 if(c){const tp=c.v.flatMap(x=>x.pts.filter(a=>a[0]!=null).map(a=>[a[1],a[0]]));if(tp.length>1)LM.fitBounds(tp,{padding:[40,40]});else if(q)LM.flyTo([q[1],q[0]],Math.max(LM.getZoom(),12))}else if(pp.length>1)LM.fitBounds(pp,{padding:[50,50]})}
-function vue(){compteur();if(location.hash!=="#perso"){PS="";DELC=null}document.body.classList.toggle("home",!["#cotes","#carte","#perso"].includes(location.hash));const h=location.hash,n=h==="#carte"?"carte":h==="#cotes"?"cotes":h==="#perso"?"perso":"accueil";$("v-accueil").hidden=n!=="accueil";$("v-cotes").hidden=n!=="cotes";$("v-carte").hidden=n!=="carte";$("v-perso").hidden=n!=="perso";document.querySelectorAll(".nav [data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n===n));if(n==="carte")grande();else if(n==="cotes"){det();liste()}else if(n==="perso")persoRender()}
+function vue(){compteur();document.body.classList.toggle("carte",location.hash==="#carte");if(location.hash!=="#perso"){PS="";DELC=null}document.body.classList.toggle("home",!["#cotes","#carte","#perso"].includes(location.hash));const h=location.hash,n=h==="#carte"?"carte":h==="#cotes"?"cotes":h==="#perso"?"perso":"accueil";$("v-accueil").hidden=n!=="accueil";$("v-cotes").hidden=n!=="cotes";$("v-carte").hidden=n!=="carte";$("v-perso").hidden=n!=="perso";document.querySelectorAll(".nav [data-n]").forEach(b=>b.classList.toggle("on",b.dataset.n===n));if(n==="carte")grande();else if(n==="cotes"){det();liste()}else if(n==="perso")persoRender()}
 addEventListener("hashchange",vue);vue();
 det();liste();
 </script>
